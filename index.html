@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101714">
+  <meta name="description" content="Consola de radar interactiva para visualizar ecos y simular datos angulares.">
+  <title>RADAR / Consola de vigilancia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- <header class="topbar">
+      <a class="brand" href="#inicio" aria-label="Radar, inicio">
+        <span class="brand-mark" aria-hidden="true"><span></span></span>
+        <span class="brand-name">RADAR<span>/</span></span>
+        <span class="brand-divider"></span>
+        <span class="brand-context">CENTRO DE VIGILANCIA</span>
+      </a>
+      <div class="topbar-meta">
+        <span class="system-state"><span class="state-dot"></span><span id="system-status">SISTEMA ACTIVO</span></span>
+        <span class="topbar-clock" id="clock">--:--:-- UTC</span>
+      </div>
+    </header> -->
+
+    <main id="inicio">
+      <section class="intro-row" aria-label="Estado de la estación">
+        <div>
+          <h1>Simulador Radar <span>WEB</span></h1>
+
+            <div class="session-tag"> <span id="session-date">--- --- --- --- --- --- --- --- --- --- --- --- ---</span></div>
+            
+            <p class="eyebrow">DESAROLLADOR POR (GRUPO 7): <span>/</span> SECCION A</p>
+            <p class="eyebrow"><span class="session-icon" aria-hidden="true">◉</span>BRICEÑO EDGAR 01</p>
+            <p class="eyebrow"><span class="session-icon" aria-hidden="true">◉</span>ESPINOZA HENDELBERTH 02</p>
+            <p class="eyebrow"><span class="session-icon" aria-hidden="true">◉</span>ROSALES SAMUEL 03</p>
+            <p class="eyebrow"><span class="session-icon" aria-hidden="true">◉</span>SUN JUAN 04</p>
+        </div>
+      </section>
+
+      <section class="metrics" aria-label="Resumen de detecciones">
+        <article class="metric">
+          <span class="metric-label">CONTACTOS ACTIVOS</span>
+          <span class="metric-value" id="contact-count">00</span>
+          <span class="metric-note"><span class="metric-live-dot"></span> rastreo continuo</span>
+        </article>
+        <article class="metric">
+          <span class="metric-label">ÚLTIMO ECO</span>
+          <span class="metric-value metric-coordinate" id="last-echo">— <small>—</small></span>
+          <span class="metric-note" id="last-echo-time">sin detecciones</span>
+        </article>
+        <article class="metric">
+          <span class="metric-label">ALCANCE MÁXIMO</span>
+          <span class="metric-value">100 <small>km</small></span>
+          <span class="metric-note">radio de exploración</span>
+        </article>
+        <article class="metric metric-weather">
+          <span class="metric-label">CONDICIÓN DE SEÑAL</span>
+          <span class="signal-value"><span class="signal-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span> ESTABLE</span>
+          <span class="metric-note">banda X <span class="note-divider">·</span> 9.4 GHz</span>
+        </article>
+      </section>
+
+      <section class="workbench" aria-label="Consola de radar">
+        <section class="radar-panel panel">
+          <div class="panel-heading">
+            <div>
+              <p class="panel-kicker">VISUALIZACIÓN</p>
+              <h2>Plano de exploración</h2>
+            </div>
+            <div class="panel-heading-right"><span class="sweep-indicator"></span></div>
+          </div>
+          <div class="radar-stage">
+            <div class="radar-canvas-wrap">
+              <canvas id="radar-canvas" role="img" aria-label="Radar circular con cuadrícula, barrido y contactos detectados"></canvas>
+              <div class="axis-label axis-n">N</div>
+              <div class="axis-label axis-e">E</div>
+              <div class="axis-label axis-s">S</div>
+              <div class="axis-label axis-w">O</div>
+              <div class="radar-readout" id="radar-readout">AZ 000° <span>·</span> 000 km</div>
+            </div>
+          </div>
+          <div class="radar-footer">
+            <div class="range-legend"><span>ANILLOS</span><b>25</b><i></i><b>50</b><i></i><b>75</b><i></i><b>100 km</b></div>
+            <button class="icon-button" id="clear-button" type="button" title="Borrar todos los ecos" aria-label="Borrar todos los ecos"><span aria-hidden="true">⌫</span></button>
+          </div>
+        </section>
+
+        <aside class="side-column">
+          <section class="panel input-panel">
+            <div class="panel-heading compact-heading">
+              <div><p class="panel-kicker">ENTRADA MANUAL</p><h2>Inyectar coordenada</h2></div>
+              <span class="input-index">01</span>
+            </div>
+            <form id="coordinate-form" class="coordinate-form">
+              <label for="coordinate-input">ÁNGULO, DISTANCIA <span>(° , km)</span></label>
+              <div class="input-row">
+                <input id="coordinate-input" name="coordinate" type="text" inputmode="decimal" placeholder="045, 32" autocomplete="off" aria-describedby="input-hint input-error">
+                <button class="submit-button" type="submit" aria-label="Registrar eco"><span aria-hidden="true">↗</span></button>
+              </div>
+              <p class="input-hint" id="input-hint">Ejemplo: <code>045, 32</code> detecta un eco a 45° y 32 km.</p>
+              <p class="input-error" id="input-error" role="alert" aria-live="polite"></p>
+            </form>
+            <div class="panel-rule"></div>
+            <div class="simulation-row">
+              <div><span class="simulation-title">Tráfico simulado</span><span class="simulation-copy" id="simulation-copy">Genera ecos aleatorios</span></div>
+              <button id="simulation-toggle" class="toggle-button" type="button" role="switch" aria-checked="false" aria-label="Activar tráfico simulado"><span></span></button>
+            </div>
+            <button id="random-button" class="random-button" type="button"><span aria-hidden="true">✳</span> GENERAR ECO ALEATORIO</button>
+          </section>
+
+          <section class="panel contacts-panel">
+            <div class="panel-heading compact-heading">
+              <div><p class="panel-kicker">SEGUIMIENTO</p><h2>Contactos detectados</h2></div>
+              <span class="contact-counter" id="contact-counter">00</span>
+            </div>
+            <div class="contact-list" id="contact-list" aria-live="polite">
+              <div class="empty-state"><span class="empty-crosshair" aria-hidden="true">⊕</span><span>Sin ecos registrados</span><small>Los nuevos contactos aparecerán aquí</small></div>
+            </div>
+            <div class="contacts-footer"><span><i class="contact-key"></i> ECO CONFIRMADO</span><span id="updated-at">ACTUALIZADO --:--:--</span></div>
+          </section>
+        </aside>
+      </section>
+
+    </main>
+  </div>
+</body>
+</html>
